@@ -89,29 +89,29 @@ class ArticleController extends Controller
         //запрос
         $exactMatch = Article::with('categories', 'author')
             ->where('title', $searchTerm)
-            ->select('*', DB::raw("1 as priority"))
             ->orWhereHas('categories', function ($query) use ($searchTerm) {
                 $query->where('name', $searchTerm);
             })
             ->orWhereHas('author', function ($query) use ($searchTerm) {
                 $query->where('last_name', $searchTerm)
-                    ->orWhere('first_name', $searchTerm)
-                    ->orWhere('middle_name', $searchTerm);
-            });
+                ->orWhere('first_name', $searchTerm)
+                ->orWhere('middle_name', $searchTerm);
+            })
+            ->select('*', DB::raw("1 as priority"));
 
         //запрос*
         $startWithMatch = Article::with('categories', 'author')
             ->where('title', 'like', $searchTerm . '%')
             ->whereNotIn('id', $exactMatch->pluck('id'))
-            ->select('*', DB::raw("2 as priority"))
             ->orWhereHas('categories', function ($query) use ($searchTerm) {
                 $query->where('name', 'like', $searchTerm . '%');
             })
             ->orWhereHas('author', function ($query) use ($searchTerm) {
                 $query->where('last_name', 'like', $searchTerm . '%')
-                    ->orWhere('first_name', 'like', $searchTerm . '%')
-                    ->orWhere('middle_name', 'like', $searchTerm . '%');
-            });
+                ->orWhere('first_name', 'like', $searchTerm . '%')
+                ->orWhere('middle_name', 'like', $searchTerm . '%');
+            })
+            ->select('*', DB::raw("2 as priority"));
 
         //*запрос*
         $anywhereMatch = Article::with('categories', 'author')
