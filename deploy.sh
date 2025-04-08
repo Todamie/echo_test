@@ -21,7 +21,6 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
-# Выполнение миграций
 echo "Выполнение миграций и заполнение базы данных..."
 php artisan migrate --seed
 

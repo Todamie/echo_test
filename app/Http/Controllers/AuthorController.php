@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AuthorController extends Controller
 {
@@ -26,8 +27,10 @@ class AuthorController extends Controller
     public function index()
     {
         $authors = Author::query()
-        ->orderBy('last_name','asc')
-        ->paginate(10);
+            ->orderBy('last_name', 'asc')
+            ->orderBy('first_name', 'asc')
+            ->orderBy('middle_name', 'asc')
+            ->paginate(20);
 
         if ($authors->isEmpty()) {
             return response()->json([
@@ -83,9 +86,29 @@ class AuthorController extends Controller
 
         $searchTerm = trim($request->search_author);
 
-        $authors = Author::query()
+        $exactMatch = Author::query()
+            ->where('last_name', $searchTerm)
+            ->select('*', DB::raw("1 as priority"));
+
+        $startWithMatch = Author::query()
+            ->where('last_name', 'like', $searchTerm . '%')
+            ->whereNotIn('id', $exactMatch->pluck('id'))
+            ->select('*', DB::raw("2 as priority"));
+
+        $anywhereMatch = Author::query()
             ->where('last_name', 'like', '%' . $searchTerm . '%')
-            ->paginate(10);
+            ->whereNotIn('id', $exactMatch->pluck('id'))
+            ->whereNotIn('id', $startWithMatch->pluck('id'))
+            ->select('*', DB::raw("3 as priority"));
+
+        $authors = $exactMatch
+            ->union($startWithMatch)
+            ->union($anywhereMatch)
+            ->orderBy('priority')
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->orderBy('middle_name')
+            ->paginate(20);
 
         if ($authors->isEmpty()) {
             return response()->json([

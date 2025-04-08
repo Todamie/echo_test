@@ -29,6 +29,8 @@ class Author extends Model
 
     protected $fillable = ['last_name', 'first_name', 'middle_name', 'logo', 'birthdate', 'bio', 'slug'];
 
+    protected $hidden = ['priority'];
+
     public function articles()
     {
         return $this->hasMany(Article::class);

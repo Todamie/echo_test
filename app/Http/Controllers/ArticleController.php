@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
@@ -27,7 +27,8 @@ class ArticleController extends Controller
     {
         $articles = Article::with('categories', 'author')
             ->latest()
-            ->paginate(10);
+            ->orderBy('title', 'asc')
+            ->paginate(20);
 
         if ($articles->isEmpty()) {
             return response()->json([
@@ -88,6 +89,7 @@ class ArticleController extends Controller
         //запрос
         $exactMatch = Article::with('categories', 'author')
             ->where('title', $searchTerm)
+            ->select('*', DB::raw("1 as priority"))
             ->orWhereHas('categories', function ($query) use ($searchTerm) {
                 $query->where('name', $searchTerm);
             })
@@ -95,12 +97,13 @@ class ArticleController extends Controller
                 $query->where('last_name', $searchTerm)
                     ->orWhere('first_name', $searchTerm)
                     ->orWhere('middle_name', $searchTerm);
-            })
-            ->latest();
+            });
 
         //запрос*
         $startWithMatch = Article::with('categories', 'author')
             ->where('title', 'like', $searchTerm . '%')
+            ->whereNotIn('id', $exactMatch->pluck('id'))
+            ->select('*', DB::raw("2 as priority"))
             ->orWhereHas('categories', function ($query) use ($searchTerm) {
                 $query->where('name', 'like', $searchTerm . '%');
             })
@@ -108,29 +111,30 @@ class ArticleController extends Controller
                 $query->where('last_name', 'like', $searchTerm . '%')
                     ->orWhere('first_name', 'like', $searchTerm . '%')
                     ->orWhere('middle_name', 'like', $searchTerm . '%');
-            })
-            ->whereNotIn('id', $exactMatch->pluck('id'))
-            ->latest();
+            });
 
         //*запрос*
         $anywhereMatch = Article::with('categories', 'author')
             ->where('title', 'like', '%' . $searchTerm . '%')
+            ->whereNotIn('id', $exactMatch->pluck('id'))
+            ->whereNotIn('id', $startWithMatch->pluck('id'))
             ->orWhereHas('categories', function ($query) use ($searchTerm) {
                 $query->where('name', 'like', '%' . $searchTerm . '%');
             })
             ->orWhereHas('author', function ($query) use ($searchTerm) {
                 $query->where('last_name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('first_name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('middle_name', 'like', '%' . $searchTerm . '%');
+                ->orWhere('first_name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('middle_name', 'like', '%' . $searchTerm . '%');
             })
-            ->whereNotIn('id', $exactMatch->pluck('id'))
-            ->whereNotIn('id', $startWithMatch->pluck('id'))
-            ->latest();
+            ->select('*', DB::raw("3 as priority"));
 
         $articles = $exactMatch
             ->union($startWithMatch)
             ->union($anywhereMatch)
-            ->paginate(10);
+            ->orderBy('priority')
+            ->latest()
+            ->orderBy('title')
+            ->paginate(20);
 
         if ($articles->isEmpty()) {
             return response()->json([

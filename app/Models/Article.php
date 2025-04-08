@@ -28,6 +28,8 @@ class Article extends Model
 
     protected $fillable = ['title', 'image', 'announcement', 'content', 'slug', 'author_id'];
 
+    protected $hidden = ['priority'];
+
     public function categories()
     {
         return $this->belongsToMany(Category::class);
