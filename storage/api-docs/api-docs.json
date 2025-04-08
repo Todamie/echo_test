@@ -1,0 +1,544 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API для статей",
+        "description": "API для статей, авторов и категорий",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api"
+        }
+    ],
+    "paths": {
+        "/articles": {
+            "get": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Получить список статей с их категориями и автором",
+                "operationId": "89181b74a8aa4d580750ede6aa32f92a",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Article"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/search": {
+            "post": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Поиск статей по названию/категории/автору",
+                "operationId": "a7e4501109754b3984c3c2516cda72ed",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "search_article"
+                                ],
+                                "properties": {
+                                    "search_article": {
+                                        "description": "Запрос для поиска",
+                                        "type": "string",
+                                        "example": "test"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Article"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/{idOrSlug}": {
+            "get": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Выводит статью по id или slug",
+                "operationId": "f8571bd80371c6094c885e08d1813838",
+                "parameters": [
+                    {
+                        "name": "idOrSlug",
+                        "in": "path",
+                        "description": "ID или slug статьи",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Article"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/authors": {
+            "get": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Получить список авторов",
+                "operationId": "33b4ca0e528a8b6298d9942781a0c85a",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Author"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/authors/search": {
+            "post": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Поиск авторов по фамилии",
+                "operationId": "6bf51ad688903d2a06ddece77a9ff445",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "search_author"
+                                ],
+                                "properties": {
+                                    "search_author": {
+                                        "description": "Запрос для поиска",
+                                        "type": "string",
+                                        "example": "test"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Author"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/authors/{idOrSlug}": {
+            "get": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Получить автора по id или slug",
+                "operationId": "5dc021e592cd99a58a0a52c8d1fa1b8c",
+                "parameters": [
+                    {
+                        "name": "idOrSlug",
+                        "in": "path",
+                        "description": "ID или slug автора",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Author"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Получить список категорий и параметрами для дерева",
+                "operationId": "ead5fb1cf2a7453acb2e37928a1b1eaf",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/categories/{idOrSlug}": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Получить категорию по id или slug с потомками",
+                "operationId": "c00476f1a8e1854826c3f3bb782adf74",
+                "parameters": [
+                    {
+                        "name": "idOrSlug",
+                        "in": "path",
+                        "description": "ID или slug категории",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/image": {
+            "post": {
+                "tags": [
+                    "Image"
+                ],
+                "summary": "Обработка изображения перед сохранением в бд",
+                "operationId": "3cf1444679935dd50db6841736ba5916",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "image",
+                                    "width"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "description": "Изображение для загрузки (jpeg, png, jpg, webp)",
+                                        "type": "file"
+                                    },
+                                    "width": {
+                                        "description": "Ширина изображения",
+                                        "type": "integer",
+                                        "example": 150
+                                    },
+                                    "height": {
+                                        "description": "Высота изображения (опционально)",
+                                        "type": "integer",
+                                        "example": 150,
+                                        "nullable": true
+                                    },
+                                    "method": {
+                                        "description": "Метод обработки изображения (resize по умолчанию или crop) (опционально)",
+                                        "type": "string",
+                                        "default": "resize",
+                                        "enum": [
+                                            "resize",
+                                            "crop"
+                                        ],
+                                        "nullable": true
+                                    },
+                                    "path": {
+                                        "description": "Путь для сохранения изображения (по умолчанию images)",
+                                        "type": "string",
+                                        "example": "images",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Image"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Article": {
+                "title": "Article",
+                "description": "Модель статьи",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "author_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Статья 1"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "https://dummyimage.com/600x400/5e5887/9dbefa&text=non"
+                    },
+                    "announcement": {
+                        "type": "string",
+                        "example": "Анонс статьи 1"
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "Контент статьи 1"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "statya-1"
+                    },
+                    "created_at": {
+                        "type": "timestamp",
+                        "example": "2000-01-01 00:00:00"
+                    },
+                    "updated_at": {
+                        "type": "timestamp",
+                        "example": "2000-01-01 00:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "Author": {
+                "title": "Author",
+                "description": "Модель автора",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "Иванов"
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "example": "Иван"
+                    },
+                    "middle_name": {
+                        "type": "string",
+                        "example": "Иванович"
+                    },
+                    "logo": {
+                        "type": "string",
+                        "example": "https://dummyimage.com/600x400/5e5887/9dbefa&text=non"
+                    },
+                    "birthdate": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2000-01-01"
+                    },
+                    "bio": {
+                        "type": "string",
+                        "example": "Биография автора"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "ivanovii"
+                    },
+                    "created_at": {
+                        "type": "timestamp",
+                        "example": "2000-01-01 00:00:00"
+                    },
+                    "updated_at": {
+                        "type": "timestamp",
+                        "example": "2000-01-01 00:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "Category": {
+                "title": "Category",
+                "description": "Модель категории",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Категория 1"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "https://dummyimage.com/600x400/5e5887/9dbefa&text=non"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Описание категории 1"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "kategoriya-1"
+                    },
+                    "created_at": {
+                        "type": "timestamp",
+                        "example": "2000-01-01 00:00:00"
+                    },
+                    "updated_at": {
+                        "type": "timestamp",
+                        "example": "2000-01-01 00:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "Image": {
+                "title": "Image",
+                "description": "Модель изображения",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "imageName"
+                    },
+                    "link": {
+                        "type": "string",
+                        "example": "/storage/images/thumb_1743663727_imageName_150x150.webp"
+                    },
+                    "created_at": {
+                        "type": "timestamp",
+                        "example": "2000-01-01 00:00:00"
+                    },
+                    "updated_at": {
+                        "type": "timestamp",
+                        "example": "2000-01-01 00:00:00"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Articles",
+            "description": "API Статей"
+        },
+        {
+            "name": "Categories",
+            "description": "API Категорий"
+        },
+        {
+            "name": "Authors",
+            "description": "API Авторов"
+        },
+        {
+            "name": "Image",
+            "description": "API Изображений"
+        }
+    ]
+}
