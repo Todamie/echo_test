@@ -28,7 +28,7 @@ class Category extends Model
     protected $fillable = ['name', 'image', 'description', 'slug'];
     //Если нужно скрыть поля дерева
     // protected $hidden = ['_lft', '_rgt', 'parent_id'];
-    protected $hidden = ['_lft', '_rgt'];
+    // protected $hidden = ['_lft', '_rgt'];
     
     public function articles()
     {
