@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    public $perPage = 10;
+
     /**
      * @OA\Get(
      *     path="/categories",
